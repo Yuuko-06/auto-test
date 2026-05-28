@@ -144,3 +144,83 @@ class NacosRegistry:
             task.cancel()
         self._beat_tasks.clear()
         await self._client.aclose()
+
+
+class NacosConfigClient:
+    """Nacos 配置中心 HTTP API 封装"""
+
+    def __init__(
+        self,
+        server_addr: str = "127.0.0.1:8848",
+        namespace: str = "",
+        group: str = "DEFAULT_GROUP",
+    ):
+        self.server = server_addr.rstrip("/")
+        self.namespace = namespace
+        self.group = group
+        self._client = httpx.AsyncClient(timeout=10.0)
+
+    async def get_config(self, data_id: str, group: str | None = None) -> str | None:
+        """从 Nacos 拉取配置，返回配置文本；不存在返回 None"""
+        url = f"http://{self.server}/nacos/v1/cs/configs"
+        params = {
+            "dataId": data_id,
+            "group": group or self.group,
+            "tenant": self.namespace,
+        }
+        try:
+            resp = await self._client.get(url, params=params)
+            if resp.status_code == 404:
+                logger.warning(f"配置 {data_id} 不存在")
+                return None
+            resp.raise_for_status()
+            logger.info(f"配置 {data_id} 拉取成功")
+            return resp.text
+        except Exception as e:
+            logger.error(f"拉取配置 {data_id} 失败: {e}")
+            return None
+
+    async def publish_config(
+        self,
+        data_id: str,
+        content: str,
+        config_type: str = "json",
+        group: str | None = None,
+    ) -> bool:
+        """发布配置到 Nacos"""
+        url = f"http://{self.server}/nacos/v1/cs/configs"
+        data = {
+            "dataId": data_id,
+            "group": group or self.group,
+            "tenant": self.namespace,
+            "content": content,
+            "type": config_type,
+        }
+        try:
+            resp = await self._client.post(url, data=data)
+            if resp.text == "true":
+                logger.info(f"配置 {data_id} 发布成功")
+                return True
+            logger.warning(f"配置 {data_id} 发布返回: {resp.text}")
+            return False
+        except Exception as e:
+            logger.error(f"发布配置 {data_id} 失败: {e}")
+            return False
+
+    async def delete_config(self, data_id: str, group: str | None = None) -> bool:
+        """删除 Nacos 配置"""
+        url = f"http://{self.server}/nacos/v1/cs/configs"
+        params = {
+            "dataId": data_id,
+            "group": group or self.group,
+            "tenant": self.namespace,
+        }
+        try:
+            resp = await self._client.delete(url, params=params)
+            return resp.text == "true"
+        except Exception as e:
+            logger.error(f"删除配置 {data_id} 失败: {e}")
+            return False
+
+    async def close(self):
+        await self._client.aclose()

@@ -47,6 +47,9 @@ async def lifespan(app: FastAPI):
 
     logger.info(f"启动 {config.SERVICE_NAME}，端口 {config.SERVICE_PORT}")
 
+    # 配置中心（Nacos Config 优先，失败降级到环境变量）
+    await config.init_config()
+
     # 数据库
     engine = create_engine("scheduler")
     session_factory = create_session_factory(engine)

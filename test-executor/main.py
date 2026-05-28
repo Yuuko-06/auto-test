@@ -33,6 +33,8 @@ async def lifespan(app: FastAPI):
 
     logger.info(f"启动 {config.SERVICE_NAME}，端口 {config.SERVICE_PORT}")
 
+    await config.init_config()
+
     engine = create_engine("executor")
     session_factory = create_session_factory(engine)
     await init_db(engine)
