@@ -1,0 +1,301 @@
+[
+  {
+    "endpoint_id": "2b42ff51-bd69-4c08-bd99-3e02be46819f",
+    "case_type": "NORMAL",
+    "title": "上传图片成功",
+    "description": "验证上传有效图片文件返回成功",
+    "priority": "HIGH",
+    "request_params": {
+      "query": {},
+      "headers": {},
+      "body": {
+        "petId": "12345",
+        "additionalMetadata": "test metadata",
+        "file": "base64_encoded_image_data"
+      }
+    },
+    "expected_status": 200,
+    "expected_body": {
+      "type": "json",
+      "description": "上传成功响应"
+    }
+  },
+  {
+    "endpoint_id": "2b42ff51-bd69-4c08-bd99-3e02be46819f",
+    "case_type": "ABNORMAL",
+    "title": "上传图片时petId为空",
+    "description": "验证缺少必填路径参数petId返回错误",
+    "priority": "HIGH",
+    "request_params": {
+      "query": {},
+      "headers": {},
+      "body": {
+        "petId": "",
+        "additionalMetadata": "test",
+        "file": "image_data"
+      }
+    },
+    "expected_status": 400,
+    "expected_body": {
+      "type": "json",
+      "description": "缺少必填参数错误"
+    }
+  },
+  {
+    "endpoint_id": "2b42ff51-bd69-4c08-bd99-3e02be46819f",
+    "case_type": "BOUNDARY",
+    "title": "上传超大文件",
+    "description": "验证上传超过限制大小的文件返回错误",
+    "priority": "MEDIUM",
+    "request_params": {
+      "query": {},
+      "headers": {},
+      "body": {
+        "petId": "12345",
+        "additionalMetadata": "large file test",
+        "file": "aaaaaaaaaa"
+      }
+    },
+    "expected_status": 413,
+    "expected_body": {
+      "type": "json",
+      "description": "文件过大错误"
+    }
+  },
+  {
+    "endpoint_id": "cee548dd-4083-445b-838c-c26cfd455ee8",
+    "case_type": "NORMAL",
+    "title": "添加新宠物成功",
+    "description": "验证有效宠物数据添加成功",
+    "priority": "HIGH",
+    "request_params": {
+      "query": {},
+      "headers": {},
+      "body": {
+        "name": "Buddy",
+        "status": "available"
+      }
+    },
+    "expected_status": 200,
+    "expected_body": {
+      "type": "json",
+      "description": "添加成功响应"
+    }
+  },
+  {
+    "endpoint_id": "cee548dd-4083-445b-838c-c26cfd455ee8",
+    "case_type": "ABNORMAL",
+    "title": "添加宠物时缺少必填字段",
+    "description": "验证缺少name字段返回错误",
+    "priority": "HIGH",
+    "request_params": {
+      "query": {},
+      "headers": {},
+      "body": {
+        "status": "available"
+      }
+    },
+    "expected_status": 400,
+    "expected_body": {
+      "type": "json",
+      "description": "缺少必填字段错误"
+    }
+  },
+  {
+    "endpoint_id": "cee548dd-4083-445b-838c-c26cfd455ee8",
+    "case_type": "BOUNDARY",
+    "title": "添加宠物时name字段超长",
+    "description": "验证name字段超过最大长度返回错误",
+    "priority": "MEDIUM",
+    "request_params": {
+      "query": {},
+      "headers": {},
+      "body": {
+        "name": "aaaaaaaaaa",
+        "status": "available"
+      }
+    },
+    "expected_status": 400,
+    "expected_body": {
+      "type": "json",
+      "description": "字段超长错误"
+    }
+  },
+  {
+    "endpoint_id": "48980782-050b-4652-8c71-30e47f6794d2",
+    "case_type": "NORMAL",
+    "title": "更新宠物信息成功",
+    "description": "验证有效宠物数据更新成功",
+    "priority": "HIGH",
+    "request_params": {
+      "query": {},
+      "headers": {},
+      "body": {
+        "id": 1,
+        "name": "Max",
+        "status": "sold"
+      }
+    },
+    "expected_status": 200,
+    "expected_body": {
+      "type": "json",
+      "description": "更新成功响应"
+    }
+  },
+  {
+    "endpoint_id": "48980782-050b-4652-8c71-30e47f6794d2",
+    "case_type": "ABNORMAL",
+    "title": "更新不存在的宠物",
+    "description": "验证更新不存在的宠物ID返回错误",
+    "priority": "HIGH",
+    "request_params": {
+      "query": {},
+      "headers": {},
+      "body": {
+        "id": 99999,
+        "name": "Ghost",
+        "status": "available"
+      }
+    },
+    "expected_status": 404,
+    "expected_body": {
+      "type": "json",
+      "description": "资源不存在错误"
+    }
+  },
+  {
+    "endpoint_id": "48980782-050b-4652-8c71-30e47f6794d2",
+    "case_type": "BOUNDARY",
+    "title": "更新宠物时id为负数",
+    "description": "验证id为负数的边界情况返回错误",
+    "priority": "MEDIUM",
+    "request_params": {
+      "query": {},
+      "headers": {},
+      "body": {
+        "id": -1,
+        "name": "Test",
+        "status": "available"
+      }
+    },
+    "expected_status": 400,
+    "expected_body": {
+      "type": "json",
+      "description": "无效id错误"
+    }
+  },
+  {
+    "endpoint_id": "9d1b7b73-5cc1-4ff4-8961-0e2ff8d8ad3c",
+    "case_type": "NORMAL",
+    "title": "按状态查找宠物成功",
+    "description": "验证有效状态参数返回宠物列表",
+    "priority": "HIGH",
+    "request_params": {
+      "query": {
+        "status": "available"
+      },
+      "headers": {},
+      "body": {}
+    },
+    "expected_status": 200,
+    "expected_body": {
+      "type": "json",
+      "description": "宠物列表响应"
+    }
+  },
+  {
+    "endpoint_id": "9d1b7b73-5cc1-4ff4-8961-0e2ff8d8ad3c",
+    "case_type": "ABNORMAL",
+    "title": "按状态查找时状态无效",
+    "description": "验证无效状态参数返回错误",
+    "priority": "HIGH",
+    "request_params": {
+      "query": {
+        "status": "invalid_status"
+      },
+      "headers": {},
+      "body": {}
+    },
+    "expected_status": 400,
+    "expected_body": {
+      "type": "json",
+      "description": "无效状态参数错误"
+    }
+  },
+  {
+    "endpoint_id": "9d1b7b73-5cc1-4ff4-8961-0e2ff8d8ad3c",
+    "case_type": "BOUNDARY",
+    "title": "按状态查找时状态为空",
+    "description": "验证空状态参数返回错误",
+    "priority": "MEDIUM",
+    "request_params": {
+      "query": {
+        "status": ""
+      },
+      "headers": {},
+      "body": {}
+    },
+    "expected_status": 400,
+    "expected_body": {
+      "type": "json",
+      "description": "缺少必填参数错误"
+    }
+  },
+  {
+    "endpoint_id": "0f3a6d04-1b44-489f-b9eb-efbe9854330e",
+    "case_type": "NORMAL",
+    "title": "按标签查找宠物成功",
+    "description": "验证有效标签参数返回宠物列表",
+    "priority": "HIGH",
+    "request_params": {
+      "query": {
+        "tags": "cute"
+      },
+      "headers": {},
+      "body": {}
+    },
+    "expected_status": 200,
+    "expected_body": {
+      "type": "json",
+      "description": "宠物列表响应"
+    }
+  },
+  {
+    "endpoint_id": "0f3a6d04-1b44-489f-b9eb-efbe9854330e",
+    "case_type": "ABNORMAL",
+    "title": "按标签查找时标签为空",
+    "description": "验证缺少必填标签参数返回错误",
+    "priority": "HIGH",
+    "request_params": {
+      "query": {
+        "tags": ""
+      },
+      "headers": {},
+      "body": {}
+    },
+    "expected_status": 400,
+    "expected_body": {
+      "type": "json",
+      "description": "缺少必填参数错误"
+    }
+  },
+  {
+    "endpoint_id": "0f3a6d04-1b44-489f-b9eb-efbe9854330e",
+    "case_type": "BOUNDARY",
+    "title": "按标签查找时标签超长",
+    "description": "验证标签参数超过最大长度返回错误",
+    "priority": "MEDIUM",
+    "request_params": {
+      "query": {
+        "tags": "aaaaaaaaaa"
+      },
+      "headers": {},
+      "body": {}
+    },
+    "expected_status": 400,
+    "expected_body": {
+      "type": "json",
+      "description": "参数超长错误"
+    }
+  }
+]
