@@ -6,9 +6,10 @@ COPY shared/ /app/shared/
 COPY test-executor/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY test-executor/ .
+# 复制服务代码（保持包目录结构，解决相对导入问题）
+COPY test-executor/ /app/test_executor/
 
 ENV PYTHONPATH=/app:/app/shared
 
 EXPOSE 8083
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8083"]
+CMD ["python", "-m", "test_executor.main"]

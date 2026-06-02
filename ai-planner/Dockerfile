@@ -6,9 +6,10 @@ COPY shared/ /app/shared/
 COPY ai-planner/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY ai-planner/ .
+# 复制服务代码（保持包目录结构，解决相对导入问题）
+COPY ai-planner/ /app/ai_planner/
 
 ENV PYTHONPATH=/app:/app/shared
 
 EXPOSE 8082
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8082"]
+CMD ["python", "-m", "ai_planner.main"]
