@@ -101,35 +101,44 @@ class ScannerService:
 
             target = target_url.rstrip("/")
 
+            # Docker 容器内 localhost 指向容器自身，需同时尝试 host.docker.internal
+            import re
+            targets = [target]
+            if re.match(r"https?://(localhost|127\.0\.0\.1)[:/]", target):
+                alt = re.sub(r"://(localhost|127\.0\.0\.1)", r"://host.docker.internal", target)
+                targets.append(alt)
+
             # 探测 OpenAPI 文档地址
             openapi_url = None
             openapi_doc = None
             async with httpx.AsyncClient(timeout=15.0, follow_redirects=True) as client:
-                # 如果 target_url 本身是 .json 结尾，直接尝试获取
-                if target.endswith(".json") or "/json" in target:
+
+                async def _try_get(url):
+                    nonlocal openapi_doc, openapi_url
                     try:
-                        resp = await client.get(target)
+                        resp = await client.get(url)
                         if resp.status_code == 200 and resp.text.strip().startswith("{"):
                             openapi_doc = resp.json()
-                            openapi_url = target
+                            openapi_url = url
+                            return True
                     except Exception:
                         pass
+                    return False
 
-                # 否则按常规路径探测
-                if not openapi_doc:
-                    for path in OPENAPI_PATHS:
-                        try:
-                            url = f"{target}{path}"
-                            resp = await client.get(url)
-                            if resp.status_code == 200:
-                                content_type = resp.headers.get("content-type", "")
-                                if "json" in content_type or resp.text.strip().startswith("{"):
-                                    openapi_doc = resp.json()
-                                    openapi_url = url
-                                    break
-                        except Exception as e:
-                            logger.debug(f"尝试 {path} 失败: {e}")
-                            continue
+                for base in targets:
+                    # 如果 target_url 本身是 .json 结尾，直接尝试获取
+                    if base.endswith(".json") or "/json" in base:
+                        if await _try_get(base):
+                            break
+
+                    # 否则按常规路径探测
+                    if not openapi_doc:
+                        for path in OPENAPI_PATHS:
+                            url = f"{base}{path}"
+                            if await _try_get(url):
+                                break
+                    if openapi_doc:
+                        break
 
             if not openapi_doc:
                 record.status = "FAILED"

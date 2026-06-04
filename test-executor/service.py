@@ -28,15 +28,16 @@ class ExecutorService:
         self._report_gen = ReportGenerator()
         self._http_client = httpx.AsyncClient(timeout=config.REQUEST_TIMEOUT, follow_redirects=True)
 
-    async def execute(self, task_id: str, test_cases: list[dict], target_url: str) -> str:
-        """执行测试用例集，返回 execution_id"""
-        # 创建执行记录
+    async def create_execution(self, task_id: str) -> str:
+        """创建执行记录，返回 execution_id"""
         async with self._session_factory() as session:
             execution = Execution(task_id=task_id, status="RUNNING")
             session.add(execution)
             await session.commit()
-            execution_id = execution.id
+            return execution.id
 
+    async def run_execute(self, execution_id: str, task_id: str, test_cases: list[dict], target_url: str):
+        """后台执行测试用例集"""
         target = target_url.rstrip("/")
         results = []
 
@@ -63,8 +64,6 @@ class ExecutorService:
         except Exception as e:
             logger.error(f"测试执行失败: {e}")
             await self._set_execution_status(execution_id, "FAILED")
-
-        return execution_id
 
     async def get_execution(self, execution_id: str) -> dict | None:
         """获取执行记录及结果"""

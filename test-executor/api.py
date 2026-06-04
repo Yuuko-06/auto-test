@@ -30,7 +30,8 @@ async def start_execute(
     if not task_id:
         raise HTTPException(400, "缺少 task_id")
 
-    execution_id = await svc.execute(task_id, test_cases, target_url)
+    execution_id = await svc.create_execution(task_id)
+    asyncio.create_task(svc.run_execute(execution_id, task_id, test_cases, target_url))
     return {"execution_id": execution_id, "status": "RUNNING"}
 
 
