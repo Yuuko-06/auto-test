@@ -213,8 +213,11 @@ class ScannerService:
                         or content.get("*/*", {})
                     )
                     schema = json_content.get("schema")
-                    if schema:
+                    # 空 dict {} 也是合法 schema（FastAPI 无具体类型标注时）
+                    if schema is not None:
                         response_schemas[str(status)] = schema
+                    elif status not in response_schemas:
+                        response_schemas[str(status)] = {}
 
                 # 提取 tags
                 tags = detail.get("tags", [])

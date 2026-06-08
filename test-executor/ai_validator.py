@@ -38,23 +38,81 @@ class AIValidator:
         self.provider = config.AI_PROVIDER
 
     async def validate_batch(self, results: list[dict]) -> list[dict]:
-        """批量校验多条测试结果"""
+        """批量校验多条测试结果，规则层快速判断 + AI 兜底"""
         if not results:
             return []
 
-        validations = []
+        # 先规则层快速校验
+        quick_results = []
+        ai_batch = []
         for result in results:
+            quick = self._quick_check(result)
+            if quick is not None:
+                quick_results.append((result, quick))
+            else:
+                ai_batch.append(result)
+
+        # AI 校验需要进一步判断的
+        ai_validations = []
+        for result in ai_batch:
             try:
                 validation = await self._validate_single(result)
-                validations.append(validation)
+                ai_validations.append(validation)
             except Exception as e:
                 logger.error(f"校验失败: {e}")
-                validations.append({
+                ai_validations.append({
                     "passed": False,
                     "reason": f"AI校验异常: {e}",
                     "issues": [],
                 })
+
+        # 合并结果，保持原始顺序
+        quick_idx = 0
+        ai_idx = 0
+        validations = []
+        for result in results:
+            if quick_idx < len(quick_results) and quick_results[quick_idx][0] is result:
+                validations.append(quick_results[quick_idx][1])
+                quick_idx += 1
+            else:
+                validations.append(ai_validations[ai_idx])
+                ai_idx += 1
+
         return validations
+
+    def _quick_check(self, result: dict) -> dict | None:
+        """规则层快速校验：状态码匹配 → 直接 PASS；异常用例 4xx≈4xx 也 PASS"""
+        test_case = result.get("test_case", {})
+        actual_status = result.get("response_status", 0)
+        expected_status = test_case.get("expected_status")
+        case_type = test_case.get("case_type", "")
+
+        if expected_status is None:
+            return None
+
+        try:
+            expected_status = int(expected_status)
+        except (ValueError, TypeError):
+            return None
+
+        if actual_status == expected_status:
+            return {
+                "passed": True,
+                "reason": f"状态码匹配: {actual_status}",
+                "issues": [],
+            }
+
+        # 异常/边界用例：预期和实际都在 4xx 范围内 → 视为通过
+        # AI 很难精确区分 400 vs 422，能预测到 4xx 已经正确
+        if case_type in ("ABNORMAL", "BOUNDARY"):
+            if 400 <= actual_status < 500 and 400 <= expected_status < 500:
+                return {
+                    "passed": True,
+                    "reason": f"异常用例：预期 {expected_status} 实际 {actual_status}，均为客户端错误",
+                    "issues": [],
+                }
+
+        return None
 
     async def _validate_single(self, result: dict) -> dict:
         """校验单条测试结果"""

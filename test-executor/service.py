@@ -126,6 +126,19 @@ class ExecutorService:
 
     # ---- 内部方法 ----
 
+    def _substitute_path_params(self, path: str, params: dict) -> str:
+        """替换路径中的 {param} 占位符为实际值"""
+        import re
+        query = params.get("query", {})
+        body = params.get("body", {}) or {}
+        resolved = path
+        for m in re.finditer(r"\{(\w+)\}", path):
+            key = m.group(1)
+            # 优先从 query 找，再 body，最后默认值
+            val = query.get(key, body.get(key, f"1"))
+            resolved = resolved.replace(f"{{{key}}}", str(val))
+        return resolved
+
     async def _execute_one(
         self, execution_id: str, case: dict, target_url: str
     ) -> dict:
@@ -133,9 +146,10 @@ class ExecutorService:
         params = case.get("request_params", {})
         method = case.get("method", "GET")
         path = case.get("path", "/")
+        path = self._substitute_path_params(path, params)
 
         url = f"{target_url}{path}"
-        query = params.get("query", {})
+        query = {k: v for k, v in params.get("query", {}).items()}
         headers = params.get("headers", {})
         body = params.get("body")
 

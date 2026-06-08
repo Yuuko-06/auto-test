@@ -6,7 +6,7 @@
     "description": "本地测试用接口文档，包含用户管理、商品管理、订单管理三个模块"
   },
   "servers": [
-    { "url": "http://localhost:8080", "description": "本机测试（可替换为你的实际API地址）" }
+    { "url": "http://localhost:8084", "description": "本地 Mock Server（被测目标）" }
   ],
   "tags": [
     { "name": "用户管理", "description": "用户相关接口" },

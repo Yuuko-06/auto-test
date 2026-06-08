@@ -104,3 +104,11 @@ services:
     volumes:
       - ./data/executor:/app/data
       - ./reports:/app/reports
+
+  mock-server:
+    build:
+      context: .
+      dockerfile: mock-server/Dockerfile
+    container_name: mock-server
+    ports:
+      - "8084:8084"
