@@ -5,179 +5,350 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Auto Test Agent - AI 自动化接口测试</title>
 <style>
-/* ===== 基础样式 ===== */
+/* ===== 基础 ===== */
 * { margin: 0; padding: 0; box-sizing: border-box; }
 body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  background: #f0f2f5;
+  background: #f5f6fa;
   color: #2c3e50;
   line-height: 1.6;
+  min-height: 100vh;
 }
-.container { max-width: 1200px; margin: 0 auto; padding: 20px; }
 
-/* ===== 标题区 ===== */
-.header {
-  text-align: center; padding: 30px 0 20px;
-  border-bottom: 3px solid #4A90D9; margin-bottom: 24px;
+/* ===== 顶部导航栏 ===== */
+.navbar {
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+  color: #fff;
+  padding: 0 32px;
+  display: flex;
+  align-items: center;
+  height: 60px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  position: sticky;
+  top: 0;
+  z-index: 100;
 }
-.header h1 { font-size: 28px; color: #2c3e50; }
-.header p { color: #7f8c8d; font-size: 14px; margin-top: 6px; }
+.navbar .logo {
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  margin-right: 40px;
+}
+.navbar .logo span { color: #e94560; }
+.nav-tabs {
+  display: flex;
+  gap: 4px;
+  height: 100%;
+}
+.nav-tab {
+  background: none;
+  border: none;
+  color: rgba(255,255,255,0.65);
+  padding: 0 20px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+  border-bottom: 3px solid transparent;
+  font-weight: 500;
+  white-space: nowrap;
+}
+.nav-tab:hover { color: #fff; background: rgba(255,255,255,0.05); }
+.nav-tab.active { color: #e94560; border-bottom-color: #e94560; }
 
-/* ===== 卡片容器 ===== */
-.card {
-  background: #fff; border-radius: 8px; padding: 24px;
-  margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+/* ===== 主体布局 ===== */
+.main {
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: 24px 32px;
 }
-.card-title {
-  font-size: 16px; font-weight: 600; margin-bottom: 16px;
-  padding-bottom: 10px; border-bottom: 2px solid #eef2f7;
-  display: flex; align-items: center; gap: 8px;
-}
-.card-title .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
-.dot-gray { background: #bdc3c7; }
-.dot-blue { background: #4A90D9; }
-.dot-green { background: #27AE60; }
-.dot-orange { background: #F39C12; }
 
-/* ===== 输入 & 按钮区 ===== */
-.input-row {
-  display: flex; gap: 12px; align-items: center; flex-wrap: wrap;
+/* ===== 输入区 ===== */
+.input-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 20px 24px;
+  margin-bottom: 24px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
 }
-.input-row input {
-  flex: 1; min-width: 300px; padding: 10px 14px;
-  border: 1px solid #d9d9d9; border-radius: 6px; font-size: 14px;
-  outline: none; transition: border-color 0.2s;
+.input-card .label {
+  font-weight: 600;
+  font-size: 14px;
+  color: #555;
+  white-space: nowrap;
 }
-.input-row input:focus { border-color: #4A90D9; box-shadow: 0 0 0 2px rgba(74,144,217,0.2); }
+.input-card input {
+  flex: 1;
+  min-width: 280px;
+  padding: 10px 16px;
+  border: 2px solid #e8e8e8;
+  border-radius: 8px;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.input-card input:focus { border-color: #e94560; }
+.input-card input::placeholder { color: #bbb; }
 
 .btn {
-  padding: 10px 20px; border: none; border-radius: 6px;
-  font-size: 14px; cursor: pointer; font-weight: 500;
-  transition: all 0.2s; white-space: nowrap;
+  padding: 10px 22px;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s;
+  white-space: nowrap;
+  letter-spacing: 0.3px;
 }
-.btn:disabled { opacity: 0.5; cursor: not-allowed; }
-.btn-primary { background: #4A90D9; color: #fff; }
-.btn-primary:hover:not(:disabled) { background: #357ABD; }
-.btn-success { background: #27AE60; color: #fff; }
-.btn-success:hover:not(:disabled) { background: #219A52; }
-.btn-outline { background: #fff; color: #4A90D9; border: 1px solid #4A90D9; }
-.btn-outline:hover:not(:disabled) { background: #e8f0fa; }
+.btn:disabled { opacity: 0.45; cursor: not-allowed; filter: grayscale(30%); }
+.btn-go {
+  background: linear-gradient(135deg, #e94560, #c23152);
+  color: #fff;
+  box-shadow: 0 2px 6px rgba(233,69,96,0.3);
+}
+.btn-go:hover:not(:disabled) { box-shadow: 0 4px 12px rgba(233,69,96,0.4); transform: translateY(-1px); }
 
-/* ===== 状态标签 ===== */
-.tag {
-  display: inline-block; padding: 2px 10px; border-radius: 12px;
-  font-size: 12px; font-weight: 500;
+/* ===== 内容区卡片 ===== */
+.section {
+  display: none;
 }
-.tag-running { background: #e8f0fa; color: #4A90D9; }
-.tag-success { background: #e6f7ee; color: #27AE60; }
-.tag-fail { background: #fde8e8; color: #E74C3C; }
-.tag-pending { background: #fef3e2; color: #F39C12; }
+.section.active { display: block; }
+
+.card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+}
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  padding-bottom: 14px;
+  border-bottom: 2px solid #f0f0f0;
+}
+.card-title {
+  font-size: 16px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.card-title .icon {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+.icon-api { background: #e94560; }
+.icon-case { background: #f39c12; }
+.icon-result { background: #27ae60; }
+.icon-report { background: #3498db; }
+
+.badge {
+  display: inline-block;
+  background: #f0f0f0;
+  color: #666;
+  padding: 2px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+/* ===== 状态消息 ===== */
+.status-bar {
+  background: #fff;
+  border-radius: 8px;
+  padding: 10px 24px;
+  margin-bottom: 24px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  font-size: 13px;
+  color: #888;
+  min-height: 40px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.status-bar.error { color: #e94560; }
+.status-bar .loading { display: inline-block; width: 14px; height: 14px; border: 2px solid #e0e0e0; border-top-color: #e94560; border-radius: 50%; animation: spin 0.6s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
 
 /* ===== 表格 ===== */
 .table-wrap { overflow-x: auto; }
 table { width: 100%; border-collapse: collapse; font-size: 13px; }
-th, td { padding: 10px 12px; text-align: left; border-bottom: 1px solid #f0f0f0; }
-th { background: #fafbfc; font-weight: 600; color: #555; white-space: nowrap; }
-tr:hover { background: #fafbfc; }
+th, td { padding: 11px 14px; text-align: left; border-bottom: 1px solid #f5f5f5; }
+th { background: #fafbfc; font-weight: 600; color: #666; white-space: nowrap; font-size: 12px; text-transform: uppercase; letter-spacing: 0.3px; }
+tr:hover td { background: #fafbfc; }
+
 .method-badge {
-  display: inline-block; padding: 2px 8px; border-radius: 3px;
-  font-size: 11px; font-weight: 700; color: #fff; min-width: 48px; text-align: center;
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #fff;
+  min-width: 52px;
+  text-align: center;
 }
-.method-GET { background: #27AE60; }
-.method-POST { background: #4A90D9; }
-.method-PUT { background: #F39C12; }
-.method-DELETE { background: #E74C3C; }
-.method-PATCH { background: #8E44AD; }
+.method-GET { background: #27ae60; }
+.method-POST { background: #3498db; }
+.method-PUT { background: #f39c12; }
+.method-DELETE { background: #e74c3c; }
+.method-PATCH { background: #8e44ad; }
 
-/* ===== 加载 & 提示 ===== */
-.loading { display: inline-block; width: 16px; height: 16px; border: 2px solid #e0e0e0; border-top-color: #4A90D9; border-radius: 50%; animation: spin 0.6s linear infinite; margin-right: 6px; vertical-align: middle; }
-@keyframes spin { to { transform: rotate(360deg); } }
-.status-msg { font-size: 13px; color: #7f8c8d; margin-top: 8px; }
-.error-msg { color: #E74C3C; font-size: 13px; margin-top: 8px; }
-
-/* ===== 报告区 ===== */
-.report-box {
-  background: #fafbfc; border: 1px dashed #d9d9d9;
-  border-radius: 6px; padding: 16px; text-align: center;
+.tag {
+  display: inline-block;
+  padding: 3px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
 }
-.report-stats { display: flex; gap: 24px; justify-content: center; margin: 12px 0; flex-wrap: wrap; }
-.stat-item { text-align: center; }
-.stat-num { font-size: 24px; font-weight: 700; }
-.stat-label { font-size: 12px; color: #7f8c8d; }
+.tag-normal { background: #e8f5e9; color: #2e7d32; }
+.tag-abnormal { background: #fde8e8; color: #c62828; }
+.tag-boundary { background: #fff3e0; color: #e65100; }
+.tag-pass { background: #e8f5e9; color: #2e7d32; }
+.tag-fail { background: #fde8e8; color: #c62828; }
+.tag-high { background: #fde8e8; color: #c62828; }
+.tag-medium { background: #fff3e0; color: #e65100; }
+.tag-low { background: #e8eaf6; color: #283593; }
+
+/* ===== 统计卡片 ===== */
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+.stat-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 20px;
+  text-align: center;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+}
+.stat-num { font-size: 32px; font-weight: 700; line-height: 1.2; }
+.stat-label { font-size: 12px; color: #999; margin-top: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
+
+/* ===== 空状态 ===== */
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: #bbb;
+}
+.empty-state .empty-icon { font-size: 48px; margin-bottom: 12px; }
+.empty-state p { font-size: 14px; }
 
 /* ===== 响应式 ===== */
 @media (max-width: 768px) {
-  .input-row { flex-direction: column; }
-  .input-row input { min-width: auto; }
-  .report-stats { gap: 12px; }
+  .navbar { padding: 0 16px; }
+  .navbar .logo { font-size: 15px; margin-right: 16px; }
+  .nav-tab { padding: 0 12px; font-size: 13px; }
+  .main { padding: 16px; }
+  .input-card { flex-direction: column; align-items: stretch; }
+  .input-card input { min-width: auto; }
+  .stats-row { grid-template-columns: repeat(2, 1fr); }
 }
 </style>
 </head>
 <body>
-<div class="container">
 
-<!-- ===== 标题区 ===== -->
-<div class="header">
-  <h1>Auto Test Agent</h1>
-  <p>基于 AI 的接口自动化测试 — 输入 Swagger 地址，全流程自动完成</p>
-</div>
-
-<!-- ===== 地址输入 & 操作按钮 ===== -->
-<div class="card">
-  <div class="card-title"><span class="dot dot-blue"></span> 输入 & 操作</div>
-  <div class="input-row">
-    <input type="text" id="swaggerUrl" placeholder="输入 Swagger 文档地址（支持本地URL或 .json 文件）" value="http://localhost:8080/static/demo-api.json">
-    <button class="btn btn-primary" id="btnScan" onclick="startScan()">开始扫描接口</button>
-    <button class="btn btn-success" id="btnGenerate" onclick="generateAndExecute()" disabled>一键生成测试用例并执行</button>
-    <button class="btn btn-outline" id="btnReport" onclick="viewReport()" disabled>查看测试报告</button>
+<!-- ===== 顶部导航 ===== -->
+<nav class="navbar">
+  <div class="logo">Auto<span>Test</span> Agent</div>
+  <div class="nav-tabs">
+    <button class="nav-tab active" data-tab="tab-scan" onclick="switchTab('tab-scan')">接口列表</button>
+    <button class="nav-tab" data-tab="tab-cases" onclick="switchTab('tab-cases')">测试用例</button>
+    <button class="nav-tab" data-tab="tab-results" onclick="switchTab('tab-results')">执行结果</button>
+    <button class="nav-tab" data-tab="tab-report" onclick="switchTab('tab-report')">测试报告</button>
   </div>
-  <div id="globalStatus" class="status-msg"></div>
-</div>
+</nav>
 
-<!-- ===== 接口列表区 ===== -->
-<div class="card" id="endpointsCard" style="display:none;">
-  <div class="card-title"><span class="dot dot-gray" id="endpointDot"></span> 接口列表 <span id="endpointCount" style="font-weight:400;color:#7f8c8d;"></span></div>
-  <div class="table-wrap">
-    <table>
-      <thead><tr><th>请求方式</th><th>接口路径</th><th>接口说明</th><th>标签</th></tr></thead>
-      <tbody id="endpointsBody"></tbody>
-    </table>
+<div class="main">
+
+  <!-- ===== 输入区 ===== -->
+  <div class="input-card">
+    <span class="label">文档地址</span>
+    <input type="text" id="swaggerUrl" placeholder="OpenAPI / Swagger 文档地址 ..." value="http://localhost:8080/static/demo-api.json" style="flex:1.5;">
+    <span class="label">被测服务器</span>
+    <input type="text" id="serverUrl" placeholder="被测服务器地址 ..." value="http://localhost:8084" style="flex:1;">
+    <button class="btn btn-go" id="btnRun" onclick="runAll()">一键测试</button>
   </div>
-</div>
 
-<!-- ===== AI 测试用例区 ===== -->
-<div class="card" id="casesCard" style="display:none;">
-  <div class="card-title"><span class="dot dot-gray" id="caseDot"></span> AI 测试用例 <span id="caseCount" style="font-weight:400;color:#7f8c8d;"></span></div>
-  <div class="table-wrap">
-    <table>
-      <thead><tr><th>用例类型</th><th>标题</th><th>请求方式</th><th>路径</th><th>预期状态码</th><th>优先级</th></tr></thead>
-      <tbody id="casesBody"></tbody>
-    </table>
+  <!-- ===== 状态条 ===== -->
+  <div class="status-bar" id="statusBar">就绪 — 输入被测地址后点击「一键测试」</div>
+
+  <!-- ===== Tab: 接口列表 ===== -->
+  <div class="section active" id="tab-scan">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title"><span class="icon icon-api"></span>接口列表</div>
+        <span class="badge" id="endpointBadge" style="display:none"></span>
+      </div>
+      <div id="endpointsContent">
+        <div class="empty-state">
+          <div class="empty-icon" style="font-size:40px;">📡</div>
+          <p>点击「一键测试」扫描被测系统的接口</p>
+        </div>
+      </div>
+    </div>
   </div>
-</div>
 
-<!-- ===== 测试执行结果区 ===== -->
-<div class="card" id="resultsCard" style="display:none;">
-  <div class="card-title"><span class="dot dot-gray" id="resultDot"></span> 测试执行结果 <span id="resultCount" style="font-weight:400;color:#7f8c8d;"></span></div>
-  <div class="table-wrap">
-    <table>
-      <thead><tr><th>用例标题</th><th>请求方式</th><th>路径</th><th>响应状态码</th><th>耗时(ms)</th><th>测试结果</th><th>AI 校验</th></tr></thead>
-      <tbody id="resultsBody"></tbody>
-    </table>
+  <!-- ===== Tab: 测试用例 ===== -->
+  <div class="section" id="tab-cases">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title"><span class="icon icon-case"></span>AI 测试用例</div>
+        <span class="badge" id="caseBadge" style="display:none"></span>
+      </div>
+      <div id="casesContent">
+        <div class="empty-state">
+          <div class="empty-icon" style="font-size:40px;">🧪</div>
+          <p>扫描接口后 AI 将自动生成测试用例</p>
+        </div>
+      </div>
+    </div>
   </div>
-</div>
 
-<!-- ===== 报告入口区 ===== -->
-<div class="card" id="reportCard" style="display:none;">
-  <div class="card-title"><span class="dot dot-green"></span> 测试报告</div>
-  <div class="report-box" id="reportContent"></div>
-</div>
+  <!-- ===== Tab: 执行结果 ===== -->
+  <div class="section" id="tab-results">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title"><span class="icon icon-result"></span>执行结果</div>
+        <span class="badge" id="resultBadge" style="display:none"></span>
+      </div>
+      <div id="resultsContent">
+        <div class="empty-state">
+          <div class="empty-icon" style="font-size:40px;">⚡</div>
+          <p>测试执行后结果将显示在这里</p>
+        </div>
+      </div>
+    </div>
+  </div>
 
-</div><!-- .container -->
+  <!-- ===== Tab: 测试报告 ===== -->
+  <div class="section" id="tab-report">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title"><span class="icon icon-report"></span>测试报告</div>
+      </div>
+      <div id="reportContent">
+        <div class="empty-state">
+          <div class="empty-icon" style="font-size:40px;">📊</div>
+          <p>完成测试后报告将显示在这里</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- .main -->
 
 <script>
 // ===== 全局状态 =====
-const API = '';  // 同源，无需前缀
+const API = '';
 let state = {
   taskId: null,
   scanId: null,
@@ -185,109 +356,157 @@ let state = {
   endpoints: [],
   testCases: [],
   targetUrl: '',
+  reportHtml: '',
 };
 
-// ===== 工具函数 =====
 function $(id) { return document.getElementById(id); }
 
-function show(el) { el.style.display = ''; }
-function hide(el) { el.style.display = 'none'; }
+// ===== Tab 切换 =====
+function switchTab(tabId) {
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelector(`[data-tab="${tabId}"]`).classList.add('active');
+  $(tabId).classList.add('active');
+}
 
+function autoSwitch(tabId) {
+  switchTab(tabId);
+  document.querySelector(`[data-tab="${tabId}"]`)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// ===== 状态提示 =====
 function setStatus(msg, isError) {
-  const el = $('globalStatus');
+  const el = $('statusBar');
   el.innerHTML = msg;
-  el.className = isError ? 'error-msg' : 'status-msg';
+  el.className = isError ? 'status-bar error' : 'status-bar';
 }
 
-function setDot(id, cls) {
-  const el = $(id);
-  el.className = 'dot ' + cls;
-}
+// ===== 核心流程 =====
+async function runAll() {
+  const docUrl = $('swaggerUrl').value.trim();
+  const serverUrl = $('serverUrl').value.trim();
+  if (!docUrl) { setStatus('请输入 OpenAPI 文档地址', true); return; }
+  if (!serverUrl) { setStatus('请输入被测服务器地址', true); return; }
+  state.targetUrl = serverUrl;
+  state.docUrl = docUrl;
 
-// ===== 创建任务（内部调用） =====
-async function ensureTask() {
-  if (state.taskId) return state.taskId;
-  const url = $('swaggerUrl').value.trim();
-  if (!url) { setStatus('请输入 Swagger 文档地址', true); return null; }
-  state.targetUrl = url;
-
-  setStatus('<span class="loading"></span>正在创建任务...', false);
-  try {
-    const resp = await fetch(API + '/api/v1/tasks', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ target_url: url, name: '前端测试-' + new Date().toLocaleString('zh-CN') }),
-    });
-    if (!resp.ok) throw new Error('创建任务失败: ' + resp.status);
-    const data = await resp.json();
-    state.taskId = data.task_id;
-    setStatus('任务已创建: ' + state.taskId, false);
-    return state.taskId;
-  } catch (e) {
-    setStatus(e.message, true);
-    return null;
-  }
-}
-
-// ===== 步骤1：扫描接口 =====
-async function startScan() {
-  const taskId = await ensureTask();
-  if (!taskId) return;
-
-  const btn = $('btnScan');
+  const btn = $('btnRun');
   btn.disabled = true;
-  btn.textContent = '扫描中...';
-  setStatus('<span class="loading"></span>正在扫描 Swagger 接口...', false);
 
   try {
-    // 启动扫描
-    const scanResp = await fetch(API + '/api/v1/tasks/' + taskId + '/scan', {
+    // 1) 创建任务
+    setStatus('<span class="loading"></span>创建任务...');
+    btn.textContent = '创建任务...';
+    const tResp = await fetch(API + '/api/v1/tasks', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ target_url: state.targetUrl }),
+      body: JSON.stringify({ target_url: serverUrl, name: '测试-' + new Date().toLocaleString('zh-CN') }),
     });
-    if (!scanResp.ok) throw new Error('启动扫描失败');
-    const scanData = await scanResp.json();
-    state.scanId = scanData.scan_id;
+    if (!tResp.ok) throw new Error('创建任务失败 (' + tResp.status + ')');
+    state.taskId = (await tResp.json()).task_id;
 
-    // 轮询扫描状态
+    // 2) 扫描接口（用文档地址）
+    setStatus('<span class="loading"></span>扫描接口中...');
+    btn.textContent = '扫描中...';
+    const sResp = await fetch(API + '/api/v1/tasks/' + state.taskId + '/scan', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ target_url: state.docUrl }),
+    });
+    if (!sResp.ok) throw new Error('扫描启动失败');
+    state.scanId = (await sResp.json()).scan_id;
+
+    // 轮询扫描
     for (let i = 0; i < 60; i++) {
       await sleep(1500);
-      const statusResp = await fetch(API + '/api/v1/tasks/' + taskId + '/scan-status?scan_id=' + state.scanId);
-      if (!statusResp.ok) continue;
-      const statusData = await statusResp.json();
-      setStatus('<span class="loading"></span>扫描中... ' + (statusData.endpoint_count || '') + ' 个接口已发现', false);
-      if (statusData.status === 'SUCCESS') break;
-      if (statusData.status === 'FAILED') throw new Error('扫描失败');
+      const stResp = await fetch(API + '/api/v1/tasks/' + state.taskId + '/scan-status?scan_id=' + state.scanId);
+      if (!stResp.ok) continue;
+      const st = await stResp.json();
+      if (st.status === 'SUCCESS') break;
+      if (st.status === 'FAILED') throw new Error('扫描失败');
     }
 
     // 获取接口列表
-    const epResp = await fetch(API + '/api/v1/tasks/' + taskId + '/endpoints?scan_id=' + state.scanId);
+    const epResp = await fetch(API + '/api/v1/tasks/' + state.taskId + '/endpoints?scan_id=' + state.scanId);
     if (!epResp.ok) throw new Error('获取接口列表失败');
-    const epData = await epResp.json();
-    state.endpoints = epData.endpoints || [];
+    state.endpoints = (await epResp.json()).endpoints || [];
 
     // 渲染接口列表
-    renderEndpoints(state.endpoints);
-    setDot('endpointDot', 'dot-green');
-    $('endpointCount').textContent = '(' + state.endpoints.length + ' 个接口)';
-    setStatus('扫描完成，发现 ' + state.endpoints.length + ' 个接口', false);
+    if (state.endpoints.length) {
+      $('endpointsContent').innerHTML = buildEndpointsTable(state.endpoints);
+      $('endpointBadge').style.display = '';
+      $('endpointBadge').textContent = state.endpoints.length + ' 个接口';
+    }
+    setStatus('扫描完成，发现 ' + state.endpoints.length + ' 个接口');
+    autoSwitch('tab-scan');
 
-    // 启用下一步按钮
-    $('btnGenerate').disabled = false;
-    btn.textContent = '重新扫描';
+    if (!state.endpoints.length) { btn.disabled = false; btn.textContent = '一键测试'; return; }
+
+    // 3) AI 生成用例
+    setStatus('<span class="loading"></span>AI 正在生成测试用例（约 1-2 分钟）...');
+    btn.textContent = 'AI 生成中...';
+    const pResp = await fetch(API + '/api/v1/tasks/' + state.taskId + '/plan', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ endpoints: state.endpoints }),
+    });
+    if (!pResp.ok) throw new Error('AI 生成用例失败 (' + pResp.status + ')');
+    state.testCases = (await pResp.json()).test_cases || [];
+
+    // 渲染用例
+    if (state.testCases.length) {
+      $('casesContent').innerHTML = buildCasesTable(state.testCases);
+      $('caseBadge').style.display = '';
+      $('caseBadge').textContent = state.testCases.length + ' 条用例';
+    }
+    setStatus('AI 已生成 ' + state.testCases.length + ' 条用例，开始执行...');
+    autoSwitch('tab-cases');
+
+    // 4) 执行测试
+    btn.textContent = '执行中...';
+    const eResp = await fetch(API + '/api/v1/tasks/' + state.taskId + '/execute', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ test_cases: state.testCases, target_url: state.targetUrl }),
+    });
+    if (!eResp.ok) throw new Error('执行启动失败');
+    state.executionId = (await eResp.json()).execution_id;
+
+    // 轮询执行结果
+    for (let i = 0; i < 180; i++) {
+      await sleep(2000);
+      try {
+        const stResp = await fetch(API + '/api/v1/tasks/' + state.taskId + '/execute-status?execution_id=' + state.executionId);
+        if (!stResp.ok) continue;
+        const st = await stResp.json();
+        const done = st.status === 'SUCCESS' || st.status === 'PARTIAL_FAIL' || st.status === 'FAILED';
+        if (done) {
+          renderResults(st.results || [], st.status);
+          setStatus('测试完成！', false);
+          break;
+        }
+        setStatus('<span class="loading"></span>执行中... ' + (st.results ? st.results.length + '/' + state.testCases.length : '') + ' 条');
+      } catch(e) {}
+    }
+
+    // 5) 加载报告
+    await loadReport();
+    autoSwitch('tab-report');
+
+    btn.textContent = '重新测试';
   } catch (e) {
     setStatus(e.message, true);
   } finally {
     btn.disabled = false;
-    if (btn.textContent === '扫描中...') btn.textContent = '开始扫描接口';
+    if (['创建任务...', '扫描中...', 'AI 生成中...', '执行中...'].includes(btn.textContent)) {
+      btn.textContent = '一键测试';
+    }
   }
 }
 
-function renderEndpoints(endpoints) {
-  show($('endpointsCard'));
-  const tbody = $('endpointsBody');
-  tbody.innerHTML = endpoints.map(ep => `
+// ===== 表格渲染 =====
+function buildEndpointsTable(endpoints) {
+  let rows = endpoints.map(ep => `
     <tr>
       <td><span class="method-badge method-${ep.method}">${ep.method}</span></td>
       <td><code>${esc(ep.path)}</code></td>
@@ -295,157 +514,92 @@ function renderEndpoints(endpoints) {
       <td>${(ep.tags || []).join(', ') || '-'}</td>
     </tr>
   `).join('');
+  return `<div class="table-wrap"><table>
+    <thead><tr><th>方法</th><th>路径</th><th>说明</th><th>标签</th></tr></thead>
+    <tbody>${rows}</tbody>
+  </table></div>`;
 }
 
-// ===== 步骤2+3：生成用例并执行 =====
-async function generateAndExecute() {
-  if (!state.endpoints.length) { setStatus('请先扫描接口', true); return; }
-
-  const btn = $('btnGenerate');
-  btn.disabled = true;
-  btn.textContent = 'AI 生成用例中...';
-
-  try {
-    // ---- 生成测试用例 ----
-    setStatus('<span class="loading"></span>AI 正在生成测试用例（可能需要 1-2 分钟）...', false);
-    const planResp = await fetch(API + '/api/v1/tasks/' + state.taskId + '/plan', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ endpoints: state.endpoints }),
-    });
-    if (!planResp.ok) {
-      const errText = await planResp.text();
-      throw new Error('AI 生成用例失败: ' + planResp.status + ' ' + errText);
-    }
-    const planData = await planResp.json();
-    state.testCases = planData.test_cases || [];
-
-    // 渲染测试用例
-    renderTestCases(state.testCases);
-    setDot('caseDot', 'dot-green');
-    $('caseCount').textContent = '(' + state.testCases.length + ' 条用例)';
-    setStatus('AI 已生成 ' + state.testCases.length + ' 条测试用例，正在执行...', false);
-
-    // ---- 执行测试 ----
-    btn.textContent = '执行中...';
-    const execResp = await fetch(API + '/api/v1/tasks/' + state.taskId + '/execute', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ test_cases: state.testCases, target_url: state.targetUrl }),
-    });
-    if (!execResp.ok) throw new Error('启动测试执行失败');
-    const execData = await execResp.json();
-    state.executionId = execData.execution_id;
-
-    // 轮询执行结果
-    for (let i = 0; i < 180; i++) {
-      await sleep(2000);
-      try {
-        const statusResp = await fetch(API + '/api/v1/tasks/' + state.taskId + '/execute-status?execution_id=' + state.executionId);
-        if (!statusResp.ok) continue;
-        const statusData = await statusResp.json();
-        const done = statusData.status === 'SUCCESS' || statusData.status === 'PARTIAL_FAIL' || statusData.status === 'FAILED';
-        setStatus('<span class="loading"></span>执行中... ' + (statusData.results ? statusData.results.length + '/' + state.testCases.length : '') + ' 条已执行' + (done ? '（AI 校验中...）' : ''), false);
-        if (done) {
-          renderResults(statusData.results || []);
-          setDot('resultDot', statusData.status === 'SUCCESS' ? 'dot-green' : 'dot-orange');
-          const passCount = (statusData.results || []).filter(r => r.status === 'PASS').length;
-          $('resultCount').textContent = '(' + passCount + '/' + (statusData.results || []).length + ' 通过)';
-          setStatus('测试执行完成！', false);
-          $('btnReport').disabled = false;
-          break;
-        }
-      } catch(e) { /* 轮询中忽略网络错误 */ }
-    }
-
-    btn.textContent = '重新生成并执行';
-  } catch (e) {
-    setStatus(e.message, true);
-  } finally {
-    btn.disabled = false;
-    if (btn.textContent === 'AI 生成用例中...' || btn.textContent === '执行中...') {
-      btn.textContent = '一键生成测试用例并执行';
-    }
-  }
-}
-
-function renderTestCases(cases) {
-  show($('casesCard'));
+function buildCasesTable(cases) {
   const typeMap = { NORMAL: '正常', ABNORMAL: '异常', BOUNDARY: '边界' };
-  const priorityMap = { HIGH: '高', MEDIUM: '中', LOW: '低' };
-  const tbody = $('casesBody');
-  tbody.innerHTML = cases.map(c => `
+  const typeCls = { NORMAL: 'tag-normal', ABNORMAL: 'tag-abnormal', BOUNDARY: 'tag-boundary' };
+  const priMap = { HIGH: '高', MEDIUM: '中', LOW: '低' };
+  const priCls = { HIGH: 'tag-high', MEDIUM: 'tag-medium', LOW: 'tag-low' };
+  let rows = cases.map(c => `
     <tr>
-      <td><span class="tag tag-running">${typeMap[c.case_type] || c.case_type}</span></td>
+      <td><span class="tag ${typeCls[c.case_type] || ''}">${typeMap[c.case_type] || c.case_type}</span></td>
       <td>${esc(c.title)}</td>
       <td><span class="method-badge method-${c.method}">${c.method}</span></td>
       <td><code>${esc(c.path)}</code></td>
       <td>${c.expected_status}</td>
-      <td>${priorityMap[c.priority] || c.priority}</td>
+      <td><span class="tag ${priCls[c.priority] || ''}">${priMap[c.priority] || c.priority}</span></td>
     </tr>
   `).join('');
+  return `<div class="table-wrap"><table>
+    <thead><tr><th>类型</th><th>标题</th><th>方法</th><th>路径</th><th>预期状态码</th><th>优先级</th></tr></thead>
+    <tbody>${rows}</tbody>
+  </table></div>`;
 }
 
-function renderResults(results) {
-  show($('resultsCard'));
-  const tbody = $('resultsBody');
-  tbody.innerHTML = results.map(r => {
-    const statusCls = r.status === 'PASS' ? 'tag-success' : 'tag-fail';
-    const statusText = r.status === 'PASS' ? '通过' : '失败';
-    const aiOk = r.ai_validation && r.ai_validation.passed;
-    const aiText = r.ai_validation
-      ? (aiOk ? '✓ ' + esc(r.ai_validation.reason || '') : '✗ ' + esc(r.ai_validation.reason || ''))
-      : '-';
-    const aiColor = aiOk ? '#27AE60' : '#E74C3C';
-    // 从 testCases 中找到对应标题
+function renderResults(results, status) {
+  const passCount = results.filter(r => r.status === 'PASS').length;
+  $('resultsContent').innerHTML = buildResultsTable(results);
+  $('resultBadge').style.display = '';
+  $('resultBadge').textContent = passCount + '/' + results.length + ' 通过';
+  autoSwitch('tab-results');
+}
+
+function buildResultsTable(results) {
+  let rows = results.map(r => {
     const tc = state.testCases.find(t => t.case_id === r.test_case_id);
     const title = tc ? tc.title : r.test_case_id;
+    const pass = r.status === 'PASS';
+    const aiOk = r.ai_validation && r.ai_validation.passed;
+    const aiText = r.ai_validation
+      ? (aiOk ? '✓ ' : '✗ ') + esc(r.ai_validation.reason || '')
+      : '-';
     return `
       <tr>
         <td>${esc(title)}</td>
         <td><span class="method-badge method-${r.method}">${r.method}</span></td>
         <td><code>${esc(r.path)}</code></td>
         <td>${r.response_status}</td>
-        <td>${r.response_time_ms}</td>
-        <td><span class="tag ${statusCls}">${statusText}</span></td>
-        <td style="color:${aiColor};font-size:12px;">${aiText}</td>
+        <td>${r.response_time_ms} ms</td>
+        <td><span class="tag ${pass ? 'tag-pass' : 'tag-fail'}">${pass ? '通过' : '失败'}</span></td>
+        <td style="color:${aiOk ? '#2e7d32' : '#c62828'};font-size:12px;max-width:240px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${esc(aiText)}">${aiText}</td>
       </tr>
     `;
   }).join('');
+  return `<div class="table-wrap"><table>
+    <thead><tr><th>用例</th><th>方法</th><th>路径</th><th>状态码</th><th>耗时</th><th>结果</th><th>AI 校验</th></tr></thead>
+    <tbody>${rows}</tbody>
+  </table></div>`;
 }
 
-// ===== 步骤4：查看报告 =====
-async function viewReport() {
-  if (!state.taskId) { setStatus('请先完成测试', true); return; }
-
-  setStatus('<span class="loading"></span>正在加载报告...', false);
+// ===== 报告 =====
+async function loadReport() {
+  if (!state.taskId) return;
   try {
     const resp = await fetch(API + '/api/v1/tasks/' + state.taskId + '/report');
-    if (!resp.ok) throw new Error('报告不存在');
+    if (!resp.ok) return;
     const data = await resp.json();
-
-    show($('reportCard'));
-    const passRate = data.pass_rate || 0;
-    const rateColor = passRate >= 90 ? '#27AE60' : passRate >= 60 ? '#F39C12' : '#E74C3C';
-    $('reportContent').innerHTML = `
-      <div class="report-stats">
-        <div class="stat-item"><div class="stat-num">${data.total_cases}</div><div class="stat-label">总用例</div></div>
-        <div class="stat-item"><div class="stat-num" style="color:#27AE60;">${data.passed}</div><div class="stat-label">通过</div></div>
-        <div class="stat-item"><div class="stat-num" style="color:#E74C3C;">${data.failed}</div><div class="stat-label">失败</div></div>
-        <div class="stat-item"><div class="stat-num" style="color:${rateColor};">${passRate}%</div><div class="stat-label">通过率</div></div>
-      </div>
-      ${data.html_content
-        ? `<a href="javascript:void(0)" onclick="openReportHtml()" style="color:#4A90D9;text-decoration:underline;">在弹窗中查看完整 HTML 报告</a>`
-        : '<p style="color:#7f8c8d;">报告内容为空</p>'}
-    `;
-    // 缓存报告 HTML
     state.reportHtml = data.html_content || '';
 
-    setStatus('报告加载完成', false);
-    $('btnReport').textContent = '刷新报告';
-  } catch (e) {
-    setStatus(e.message, true);
-  }
+    const passRate = data.pass_rate || 0;
+    const rateColor = passRate >= 90 ? '#27ae60' : passRate >= 60 ? '#f39c12' : '#e74c3c';
+
+    $('reportContent').innerHTML = `
+      <div class="stats-row">
+        <div class="stat-card"><div class="stat-num">${data.total_cases}</div><div class="stat-label">总用例</div></div>
+        <div class="stat-card"><div class="stat-num" style="color:#27ae60;">${data.passed}</div><div class="stat-label">通过</div></div>
+        <div class="stat-card"><div class="stat-num" style="color:#e74c3c;">${data.failed}</div><div class="stat-label">失败</div></div>
+        <div class="stat-card"><div class="stat-num" style="color:${rateColor};">${passRate}%</div><div class="stat-label">通过率</div></div>
+      </div>
+      ${data.html_content
+        ? `<div style="text-align:center;"><button class="btn btn-go" onclick="openReportHtml()" style="background:linear-gradient(135deg, #3498db, #2980b9);box-shadow:0 2px 6px rgba(52,152,219,0.3);">查看完整 HTML 报告</button></div>`
+        : '<div class="empty-state"><p>报告内容为空</p></div>'}
+    `;
+  } catch(e) {}
 }
 
 function openReportHtml() {
@@ -455,15 +609,11 @@ function openReportHtml() {
   w.document.close();
 }
 
-// ===== 辅助 =====
+// ===== 工具 =====
 function esc(str) {
-  if (!str) return '';
-  return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  return str ? String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;') : '';
 }
-
-function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 </script>
 </body>
 </html>

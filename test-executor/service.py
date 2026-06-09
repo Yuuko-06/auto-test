@@ -39,6 +39,11 @@ class ExecutorService:
     async def run_execute(self, execution_id: str, task_id: str, test_cases: list[dict], target_url: str):
         """后台执行测试用例集"""
         target = target_url.rstrip("/")
+        # Docker 容器内 localhost 指向容器自身，替换为 host.docker.internal
+        import re
+        if re.match(r"https?://(localhost|127\.0\.0\.1)[:/]", target):
+            target = re.sub(r"://(localhost|127\.0\.0\.1)", r"://host.docker.internal", target)
+            logger.info(f"已替换 localhost → host.docker.internal: {target}")
         results = []
 
         try:
